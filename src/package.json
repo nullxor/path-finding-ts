@@ -1,0 +1,21 @@
+{
+  "name": "path-finding-astar",
+  "version": "1.0.0",
+  "description": "Implementation of the A* algorithm",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Path-Finding",
+    "AStar",
+    "Graphs"
+  ],
+  "author": "Olfran Jiménez",
+  "license": "MIT",
+  "devDependencies": {
+    "tsc": "^1.20150623.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}

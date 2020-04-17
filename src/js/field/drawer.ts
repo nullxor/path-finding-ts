@@ -1,12 +1,16 @@
+import { Block } from './block';
+
 /**
  * Display blocks in a Canvas
  */
-class Drawer {
+export class Drawer {
+  canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
     /**
      * Default constructor
      * @param {Canvas} canvas Canvas element
      */
-    constructor(canvas) {
+    constructor(canvas: HTMLCanvasElement) {
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d');
     }
@@ -15,7 +19,7 @@ class Drawer {
      * Display a block
      * @param {Block} block Block to display
      */
-    draw(block) {
+    draw(block: Block) {
       const realX = block.x * block.blockSize, realY = block.y * block.blockSize;
       this.ctx.strokeStyle = block.borderColor;
       this.ctx.strokeRect(realX, realY, block.blockSize, block.blockSize);
