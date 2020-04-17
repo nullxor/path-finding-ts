@@ -4,6 +4,8 @@
   "description": "Implementation of the A* algorithm",
   "main": "src/index.ts",
   "scripts": {
+    "dev": "npx webpack --mode development --watch",
+    "build": "npx webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -14,7 +16,8 @@
   "author": "Olfran Jiménez",
   "license": "MIT",
   "devDependencies": {
-    "tsc": "^1.20150623.0",
+    "ts-loader": "^7.0.0",
+    "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }
