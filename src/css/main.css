@@ -5,3 +5,13 @@
 body {
     background-color: #f3f3f3;
 }
+html, body, main {
+    height: 100%;
+    width: 100%;
+}
+main {
+    padding: 1%;
+}
+#stage {
+    border: 1px solid #333;
+}
