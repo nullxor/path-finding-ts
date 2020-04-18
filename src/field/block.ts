@@ -13,7 +13,7 @@ export class Block {
      * @param {string} backgroundColor Valid CSS color
      * @param {string} borderColor Valid CSS color
      */
-    constructor(x: number, y: number, blockSize=5, backgroundColor='red', borderColor='#000') {
+    constructor(x: number, y: number, blockSize = 5, backgroundColor = 'red', borderColor = '#000') {
         this.x = x;
         this.y = y;
         this.blockSize = blockSize;

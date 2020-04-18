@@ -2,7 +2,7 @@
  * Implement a PriorityQueue using a Min Heap
  */
 export class PriorityQueue<T> {
-     array: PriorityQueueItem<T>[] = [];
+    private array: PriorityQueueItem<T>[] = [];
 
     /**
      * Length
