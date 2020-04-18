@@ -4,7 +4,8 @@ import { Block } from './block';
 
 const STROKE_WIDTH = 1;
 const BLOCK_SIZE = 40;
-const WEIGHT = 1;
+const WEIGHT = 4;
+const DIAGONAL_WEIGHT = 2;
 
 /**
  * Display SVG blocks using snap
@@ -12,6 +13,7 @@ const WEIGHT = 1;
 export class Field {
     strokeWidth = STROKE_WIDTH;
     blockSize = BLOCK_SIZE;
+    allowDiagonals = false;
     private paper: Snap.Paper;
     private height: number;
     private width: number;
@@ -87,12 +89,11 @@ export class Field {
             this.graph.add(key, { x, y: y + 1 });
             this.graph.connect(parentKey, key, WEIGHT);
         }
-        /* // Diagonal
-        if (x < maxWidth && y < maxHeight) {
+        if (this.allowDiagonals && x < maxWidth && y < maxHeight) {
             const key = this.getKey(x + 1, y + 1);
             this.graph.add(key, { x: x + 1, y: y + 1 });
-            this.graph.connect(parentKey, key, WEIGHT);
-        }*/
+            this.graph.connect(parentKey, key, DIAGONAL_WEIGHT);
+        }
     }
 
     private getKey(x: number, y: number) {
