@@ -9,7 +9,7 @@ window.addEventListener('load', () => {
     field.blockSize = 50;
     field.grid();
     document.getElementById('bfs').addEventListener('click', () => {
-        graph.dfs('0_0', async (vertex) => {
+        graph.bfs('0_0', async (vertex) => {
             field.setBlock(vertex.value.x, vertex.value.y, 'red', 'black');
             await Sleep(10);
             field.setBlock(vertex.value.x, vertex.value.y, '#aadece', 'black');

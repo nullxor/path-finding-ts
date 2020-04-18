@@ -1,3 +1,5 @@
+import { Queue } from "../queue/queue";
+
 /**
  * Undirected graph
  */
@@ -24,21 +26,23 @@ export class UndirectedGraph<T> {
         edgesV2.push(edgeV2);
     }
 
-    bfs(start: string, callback: (vertex: Vertex<T>) => boolean) {
-        const queue = [this.vertices.get(start)];
+    async bfs(start: string, callback: (vertex: Vertex<T>) => Promise<boolean>, callbackFinished?: () => void) {
+        const queue = new Queue<Vertex<T>>();
         const visited = new Map<string, boolean>();
-        visited.set(start, true);
+        let currentVertex: Vertex<T>;
         let keepGoing = true;
+        queue.enqueue(this.vertices.get(start));
         while (keepGoing && queue.length > 0) {
-            const vertex = queue.shift();
-            keepGoing = callback(vertex);
-            for (const edge of this.list.get(vertex.label)) {
-                if (!visited.has(edge.to.label)) {
-                    visited.set(vertex.label, true);
-                    queue.push(edge.to);
+            currentVertex = queue.dequeue();
+            if (!visited.has(currentVertex.label)) {
+                visited.set(currentVertex.label, true);
+                keepGoing = await callback(currentVertex);
+            for (const edge of this.list.get(currentVertex.label)) {
+                    queue.enqueue(edge.to);
                 }
             }
         }
+        callbackFinished?.call(currentVertex);
     }
 
     async dfs(start: string, callback: (vertex: Vertex<T>) => Promise<boolean>, callbackFinished?: () => void) {
