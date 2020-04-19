@@ -1,9 +1,6 @@
 export class Block {
     x: number;
     y: number;
-    blockSize: number;
-    backgroundColor: string;
-    borderColor: string;
 
     /**
      * Block operations
@@ -13,11 +10,8 @@ export class Block {
      * @param {string} backgroundColor Valid CSS color
      * @param {string} borderColor Valid CSS color
      */
-    constructor(x: number, y: number, blockSize = 5, backgroundColor = 'red', borderColor = '#000') {
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
-        this.blockSize = blockSize;
-        this.backgroundColor = backgroundColor;
-        this.borderColor = borderColor;
     }
 }
