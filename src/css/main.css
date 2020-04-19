@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
 * {
+    font-family: 'Lato';
     margin: 0;
     padding: 0;
 }
@@ -10,8 +13,18 @@ html, body, main {
     width: 100%;
 }
 main {
-    padding: 1%;
+    padding: 1px;
+    height: 95%;
+    width: 100%;
 }
 #stage {
     border: 1px solid #333;
+}
+.navbar {
+    background-color: #cee1dd;
+    box-shadow: 1px 1px 5px #333;
+}
+.navbar .navbar-title {
+    color: #000;
+    font-weight: bold;
 }
