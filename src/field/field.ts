@@ -78,21 +78,28 @@ export class Field {
      */
     private connectBlock(x: number, y: number, maxWidth: number, maxHeight: number) {
         const parentKey = this.getKey(x, y);
-        this.graph.add(parentKey, { x, y });
+        this.graph.set(parentKey, { x, y });
         if (x < maxWidth) {
             const key = this.getKey(x + 1, y);
-            this.graph.add(key, { x: x + 1, y });
+            this.graph.set(key, { x: x + 1, y });
             this.graph.connect(parentKey, key, WEIGHT);
         }
         if (y < maxHeight) {
             const key = this.getKey(x, y + 1);
-            this.graph.add(key, { x, y: y + 1 });
+            this.graph.set(key, { x, y: y + 1 });
             this.graph.connect(parentKey, key, WEIGHT);
         }
-        if (this.allowDiagonals && x < maxWidth && y < maxHeight) {
-            const key = this.getKey(x + 1, y + 1);
-            this.graph.add(key, { x: x + 1, y: y + 1 });
-            this.graph.connect(parentKey, key, DIAGONAL_WEIGHT);
+        if (this.allowDiagonals) {
+            if (x < maxWidth && y < maxHeight) {
+                const key = this.getKey(x + 1, y + 1);
+                this.graph.set(key, { x: x + 1, y: y + 1 });
+                this.graph.connect(parentKey, key, DIAGONAL_WEIGHT);
+            }
+            if (x > 0 && y < maxHeight) {
+                const key = this.getKey(x - 1, y + 1);
+                this.graph.set(key, { x: x - 1, y: y + 1 });
+                this.graph.connect(parentKey, key, DIAGONAL_WEIGHT);
+            }
         }
     }
 
