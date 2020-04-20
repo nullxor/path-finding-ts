@@ -4,8 +4,8 @@ import { Block } from './block';
 
 const STROKE_WIDTH = 1;
 const BLOCK_SIZE = 40;
-const WEIGHT = 3;
-const DIAGONAL_WEIGHT = 2;
+const WEIGHT = 2;
+const DIAGONAL_WEIGHT = 1;
 
 /**
  * Display SVG blocks using snap
@@ -30,8 +30,6 @@ export class Field {
         this.paper = Snap(svgElement);
         this.height = Number(this.svgElement.clientHeight);
         this.width = Number(this.svgElement.clientWidth);
-        console.log(this.height);
-        console.log(this.width);
     }
 
     grid(backgroundColor = 'white', borderColor = 'black') {
@@ -130,7 +128,6 @@ export class Field {
     }
 
     private blockClick(key: string, event: MouseEvent) {
-        console.log(event.toElement);
         this.onBlockClick?.call(null, event);
     }
 }

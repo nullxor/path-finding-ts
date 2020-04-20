@@ -2,8 +2,8 @@ import { Field } from "./field/field";
 import { Block } from "./field/block";
 import { UndirectedGraph } from "./graph/UndirectedGraph";
 
-const DEST = '20_8';
-const START = '0_0';
+const START = '1_1';
+const DEST = '5_10';
 
 
 window.addEventListener('load', () => {
@@ -12,8 +12,8 @@ window.addEventListener('load', () => {
     field.allowDiagonals = true;
     field.blockSize = 30;
     field.grid('#f1f1f1', '#ccc');
+    field.setBlockByKey(START, 'green', 'blue');
     field.setBlockByKey(DEST, 'black', 'black');
-    field.setBlockByKey(START, 'blue', 'blue');
     document.getElementById('bfs').addEventListener('click', () => {
         graph.dijkstra(START, DEST, async (vertex) => {
             return true;
@@ -45,6 +45,8 @@ async function Sleep(ms: number) {
 function setupMenu(field: Field) {
     const dropdownMenu = document.getElementById('dropdownMenu');
     field.onBlockClick = (event: MouseEvent) => {
-        console.log(event.x, event.y);
+        dropdownMenu.style.left = `${event.x}px`;
+        dropdownMenu.style.top = `${event.y}px`;
+        dropdownMenu.style.display = 'inline';
     };
 }
