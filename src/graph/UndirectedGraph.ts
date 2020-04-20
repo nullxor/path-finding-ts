@@ -72,13 +72,14 @@ export class UndirectedGraph<T> {
         let keepGoing = true;
         queue.enqueue(0, this.vertices.get(start));
         shortestPath.set(start, { previous: '', weight: 0 });
-        while (queue.length > 0) {
+        while (keepGoing && queue.length > 0) {
             currentVertex = queue.dequeue();
             if (!visited.has(currentVertex.label)) {
                 visited.set(currentVertex.label, true);
                 keepGoing = await callback(currentVertex);
                 for (const edge of this.list.get(currentVertex.label)) {
                     this.relax(edge, shortestPath);
+                    if (edge.to.label === end) keepGoing = false;
                     queue.enqueue(shortestPath.get(edge.to.label).weight, edge.to);
                 }
             }

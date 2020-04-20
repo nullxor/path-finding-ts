@@ -4,8 +4,8 @@ import { Block } from './block';
 
 const STROKE_WIDTH = 1;
 const BLOCK_SIZE = 40;
-const WEIGHT = 4;
-const DIAGONAL_WEIGHT = 2;
+const WEIGHT = 2;
+const DIAGONAL_WEIGHT = 1;
 
 /**
  * Display SVG blocks using snap
@@ -14,28 +14,31 @@ export class Field {
     strokeWidth = STROKE_WIDTH;
     blockSize = BLOCK_SIZE;
     allowDiagonals = false;
+    onBlockClick: (event: MouseEvent) => void;
     private paper: Snap.Paper;
     private height: number;
     private width: number;
     private blocks: Map<string, Snap.Element> = new Map<string, Snap.Element>();
+    private polyLine: Snap.Element;
 
     /**
      * Default constructor
      * @param {SVGAElement} svgElement SVG element
+     * @param {UndirectedGraph} graph Undirected Graph
      */
     constructor(private svgElement: SVGElement, private graph: UndirectedGraph<Block>) {
         this.svgElement = svgElement;
         this.paper = Snap(svgElement);
-        this.height = Number(this.svgElement.getAttribute('height'));
-        this.width = Number(this.svgElement.getAttribute('width'));
+        this.height = Number(this.svgElement.clientHeight);
+        this.width = Number(this.svgElement.clientWidth);
     }
- 
-    grid() {
+
+    grid(backgroundColor = 'white', borderColor = 'black') {
         const maxWidth = Math.floor(this.width / this.blockSize);
         const maxHeight = Math.floor(this.height / this.blockSize);
         for (let y = 0; y < maxHeight; y++) {
             for (let x = 0; x < maxWidth; x++) {
-                this.addBlock(x, y, 'white', 'black');
+                this.addBlock(x, y, backgroundColor, borderColor);
                 this.connectBlock(x, y, maxWidth, maxHeight);
             }
         }
@@ -50,12 +53,17 @@ export class Field {
             stroke: borderColor,
             strokeWidth: 1
         });
-        rect.click(this.blockClick.bind(this, rect));
+        rect.click(this.blockClick.bind(this, key));
         this.blocks.set(key, rect);
     }
 
     setBlock(x: number, y: number, backgroundColor: string, borderColor: string) {
-        const block = this.getBlock(x, y);
+        const key = this.getKey(x, y);
+        this.setBlockByKey(key, backgroundColor, borderColor);
+    }
+
+    setBlockByKey(key: string, backgroundColor: string, borderColor: string) {
+        const block = this.blocks.get(key);
         if (block) {
             block.attr({
                 fill: backgroundColor,
@@ -64,9 +72,23 @@ export class Field {
         }
     }
 
-    private getBlock(x: number, y: number): Snap.Element {
-        const key = this.getKey(x, y);
-        return this.blocks.get(key);
+    showConnections(blocks: string[]) {
+        if (this.polyLine) {
+            this.polyLine.remove();
+        }
+        const points = [];
+        for (const blockKey of blocks) {
+            const block = this.blocks.get(blockKey);
+            const realX = Number(block.node['x'].baseVal.value) + (this.blockSize / 2) - 30;
+            const realY = Number(block.node['y'].baseVal.value) + (this.blockSize / 2) - 30;
+            points.push(realX, realY);
+        }
+        this.polyLine = this.paper.polyline(points);
+        this.polyLine.attr({
+            fill: 'none',
+            stroke: '#999',
+            strokeWidth: 4
+        });
     }
 
     /**
@@ -107,7 +129,7 @@ export class Field {
         return `${x}_${y}`;
     }
 
-    private blockClick(element: Snap.Element) {
-        // TODO
+    private blockClick(key: string, event: MouseEvent) {
+        this.onBlockClick?.call(null, event);
     }
 }

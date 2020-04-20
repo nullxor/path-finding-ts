@@ -1,34 +1,40 @@
 import { Field } from "./field/field";
 import { Block } from "./field/block";
 import { UndirectedGraph } from "./graph/UndirectedGraph";
-
-const DEST = '10_8';
-const START = '0_10';
+import { MainNodes } from "./app/mainnodes";
 
 window.addEventListener('load', () => {
     const graph = new UndirectedGraph<Block>();
     const field = new Field(<SVGElement>document.querySelector('#paper'), graph);
+    const mainNodes = new MainNodes(<SVGElement>document.querySelector('#paper'));
+
     field.allowDiagonals = !true;
-    field.blockSize = 50;
-    field.grid();
-    field.setBlock(10, 8, 'black', 'black');
-    field.setBlock(0, 10, 'blue', 'blue');
+    field.blockSize = 30;
+    field.grid('#f1f1f1', '#ccc');
+    mainNodes.setStartNode(5, 5, '#aaeecc', 'black', 1);
+    mainNodes.setEndNode(20, 10, 'green', 'black', 1);
     document.getElementById('bfs').addEventListener('click', () => {
-        graph.dijkstra(START, DEST, async (vertex) => {
+        const start = `${mainNodes.startX}_${mainNodes.startY}`;
+        const end = `${mainNodes.endX}_${mainNodes.endY}`;
+        console.log(start,end);
+        console.log(start, end);
+        graph.dijkstra(start, end, async (vertex) => {
             return true;
         }, (shortestPath) => {
             console.log('%cFinished!', 'color: green');
-            let current = shortestPath.get(DEST);
-            let currentKey = DEST;
-            console.log(current.weight)
-            while(currentKey !== START) {
+            let current = shortestPath.get(end);
+            let currentKey = end;
+            const connections = [currentKey];
+            while(currentKey !== start) {
                 currentKey = current.previous;
                 current = shortestPath.get(currentKey);
-                const split = currentKey.split('_');
-                field.setBlock(Number(split[0]), Number(split[1]), 'green', 'black');
+                connections.push(currentKey);
             }
+            field.showConnections(connections);
         });
     });
+    setupMenu(field);
+
 });
 
 async function Sleep(ms: number) {
@@ -37,4 +43,13 @@ async function Sleep(ms: number) {
             resolve();
         }, ms);
     });
+}
+
+function setupMenu(field: Field) {
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    field.onBlockClick = (event: MouseEvent) => {
+        dropdownMenu.style.left = `${event.x}px`;
+        dropdownMenu.style.top = `${event.y}px`;
+        dropdownMenu.style.display = 'inline';
+    };
 }
