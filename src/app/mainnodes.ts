@@ -14,6 +14,7 @@ export class MainNodes {
      * @param {SVGAElement} svgElement SVG element
      */
     constructor(private svgElement: SVGElement) {
+        this.svgElement = svgElement;
         this.paper = Snap(svgElement);
     }
 
@@ -22,7 +23,7 @@ export class MainNodes {
             this.startNode = this.paper.rect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
             this.startNode.drag(this.onDrag.bind(this, this.startNode), null, this.onDragEnd.bind(this, this.startNode));
         }
-        this.setNode(this.startNode, x, y, backgroundColor, borderColor, borderWidth);
+        this.setNode(this.startNode, x * this.blockSize, y * this.blockSize, backgroundColor, borderColor, borderWidth);
     }
 
     setEndNode(x: number, y: number, backgroundColor: string, borderColor: string, borderWidth = 1) {
@@ -68,6 +69,7 @@ export class MainNodes {
     }
 
     private onDrag(element: Snap.Element, dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
+        if (x > 0 && y > 0 && x < (this.svgElement.clientWidth - this.blockSize) && y < (this.svgElement.clientHeight - this.blockSize))
         element.attr({x, y});
     }
 

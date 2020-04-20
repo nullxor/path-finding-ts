@@ -64,27 +64,24 @@ export class UndirectedGraph<T> {
         callbackFinished?.call(currentVertex);
     }
 
-    async dijkstra(start: string, end: string, callback: (vertex: Vertex<T>) => Promise<boolean>, callbackFinished?: (shortestPath: Map<string, ShortestPath>) => void) {
+    dijkstra(start: string, end: string): Map<string, ShortestPath> {
         const queue = new PriorityQueue<Vertex<T>>();
         const visited = new Map<string, boolean>();
         const shortestPath = new Map<string, ShortestPath>();
         let currentVertex: Vertex<T>;
-        let keepGoing = true;
         queue.enqueue(0, this.vertices.get(start));
         shortestPath.set(start, { previous: '', weight: 0 });
-        while (keepGoing && queue.length > 0) {
+        while (queue.length > 0) {
             currentVertex = queue.dequeue();
             if (!visited.has(currentVertex.label)) {
                 visited.set(currentVertex.label, true);
-                keepGoing = await callback(currentVertex);
                 for (const edge of this.list.get(currentVertex.label)) {
                     this.relax(edge, shortestPath);
-                    if (edge.to.label === end) keepGoing = false;
                     queue.enqueue(shortestPath.get(edge.to.label).weight, edge.to);
                 }
             }
         }
-        callbackFinished?.call(this, shortestPath);
+        return shortestPath;
     }
 
     private relax(edge: Edge<T>, shortestPath: Map<string, ShortestPath>) {

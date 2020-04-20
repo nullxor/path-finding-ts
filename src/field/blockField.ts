@@ -1,18 +1,18 @@
 import Snap from 'snapsvg';
-import { UndirectedGraph } from '../graph/UndirectedGraph';
+import { UndirectedGraph } from '../graph/undirectedGraph';
 import { Block } from './block';
 
 const STROKE_WIDTH = 1;
-const BLOCK_SIZE = 40;
-const WEIGHT = 2;
-const DIAGONAL_WEIGHT = 1;
+const BLOCK_SIZE = 30;
+const WEIGHT = 1;
+const DIAGONAL_WEIGHT = 1.5;
 
 /**
  * Display SVG blocks using snap
  */
-export class Field {
-    strokeWidth = STROKE_WIDTH;
+export class BlockField {
     blockSize = BLOCK_SIZE;
+    strokeWidth = STROKE_WIDTH;
     allowDiagonals = false;
     onBlockClick: (event: MouseEvent) => void;
     private paper: Snap.Paper;
@@ -39,37 +39,22 @@ export class Field {
         for (let y = 0; y < maxHeight; y++) {
             for (let x = 0; x < maxWidth; x++) {
                 this.addBlock(x, y, backgroundColor, borderColor);
-                this.connectBlock(x, y, maxWidth, maxHeight);
+                this.connectBlock(x, y, maxWidth-1, maxHeight-1);
             }
         }
     }
 
-    addBlock(x: number, y: number, backgroundColor: string, borderColor: string) {
+    private addBlock(x: number, y: number, backgroundColor: string, borderColor: string) {
         const realX = x * this.blockSize, realY = y * this.blockSize;
         const key = this.getKey(x, y);
         const rect = this.paper.rect(realX, realY, this.blockSize, this.blockSize);
         rect.attr({
             fill: backgroundColor,
             stroke: borderColor,
-            strokeWidth: 1
+            strokeWidth: this.strokeWidth
         });
         rect.click(this.blockClick.bind(this, key));
         this.blocks.set(key, rect);
-    }
-
-    setBlock(x: number, y: number, backgroundColor: string, borderColor: string) {
-        const key = this.getKey(x, y);
-        this.setBlockByKey(key, backgroundColor, borderColor);
-    }
-
-    setBlockByKey(key: string, backgroundColor: string, borderColor: string) {
-        const block = this.blocks.get(key);
-        if (block) {
-            block.attr({
-                fill: backgroundColor,
-                stroke: borderColor,
-            });
-        }
     }
 
     showConnections(blocks: string[]) {
@@ -79,20 +64,20 @@ export class Field {
         const points = [];
         for (const blockKey of blocks) {
             const block = this.blocks.get(blockKey);
-            const realX = Number(block.node['x'].baseVal.value) + (this.blockSize / 2) - 30;
-            const realY = Number(block.node['y'].baseVal.value) + (this.blockSize / 2) - 30;
+            const realX = Number(block.attr('x')) + this.blockSize / 2 ;
+            const realY = Number(block.attr('y')) + this.blockSize / 2 ;
             points.push(realX, realY);
         }
         this.polyLine = this.paper.polyline(points);
         this.polyLine.attr({
             fill: 'none',
             stroke: '#999',
-            strokeWidth: 4
+            strokeWidth: 2
         });
     }
 
     /**
-     * Connect Block with its neighbours
+     * Connect block with its neighbours, for this particular case a Block is a Vertex
      * @param x X
      * @param y Y
      * @param maxWidth Max Width
