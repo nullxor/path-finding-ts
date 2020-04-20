@@ -1,37 +1,40 @@
 import { Field } from "./field/field";
 import { Block } from "./field/block";
 import { UndirectedGraph } from "./graph/UndirectedGraph";
-
-const START = '1_1';
-const DEST = '5_10';
-
+import { MainNodes } from "./app/mainnodes";
 
 window.addEventListener('load', () => {
     const graph = new UndirectedGraph<Block>();
     const field = new Field(<SVGElement>document.querySelector('#paper'), graph);
-    field.allowDiagonals = true;
+    const mainNodes = new MainNodes(<SVGElement>document.querySelector('#paper'));
+
+    field.allowDiagonals = !true;
     field.blockSize = 30;
     field.grid('#f1f1f1', '#ccc');
-    field.setBlockByKey(START, 'green', 'blue');
-    field.setBlockByKey(DEST, 'black', 'black');
+    mainNodes.setStartNode(5, 5, '#aaeecc', 'black', 1);
+    mainNodes.setEndNode(20, 10, 'green', 'black', 1);
     document.getElementById('bfs').addEventListener('click', () => {
-        graph.dijkstra(START, DEST, async (vertex) => {
+        const start = `${mainNodes.startX}_${mainNodes.startY}`;
+        const end = `${mainNodes.endX}_${mainNodes.endY}`;
+        console.log(start,end);
+        console.log(start, end);
+        graph.dijkstra(start, end, async (vertex) => {
             return true;
         }, (shortestPath) => {
             console.log('%cFinished!', 'color: green');
-            let current = shortestPath.get(DEST);
-            let currentKey = DEST;
+            let current = shortestPath.get(end);
+            let currentKey = end;
             const connections = [currentKey];
-            while(currentKey !== START) {
+            while(currentKey !== start) {
                 currentKey = current.previous;
                 current = shortestPath.get(currentKey);
                 connections.push(currentKey);
-                //field.setBlockByKey(currentKey, 'green', 'black');
             }
             field.showConnections(connections);
         });
     });
     setupMenu(field);
+
 });
 
 async function Sleep(ms: number) {

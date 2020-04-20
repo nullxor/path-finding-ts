@@ -24,6 +24,7 @@ export class Field {
     /**
      * Default constructor
      * @param {SVGAElement} svgElement SVG element
+     * @param {UndirectedGraph} graph Undirected Graph
      */
     constructor(private svgElement: SVGElement, private graph: UndirectedGraph<Block>) {
         this.svgElement = svgElement;
@@ -78,14 +79,15 @@ export class Field {
         const points = [];
         for (const blockKey of blocks) {
             const block = this.blocks.get(blockKey);
-            const realX = Number(block.node['x'].baseVal.value) + (this.blockSize / 2);
-            const realY = Number(block.node['y'].baseVal.value) + (this.blockSize / 2);
+            const realX = Number(block.node['x'].baseVal.value) + (this.blockSize / 2) - 30;
+            const realY = Number(block.node['y'].baseVal.value) + (this.blockSize / 2) - 30;
             points.push(realX, realY);
         }
         this.polyLine = this.paper.polyline(points);
         this.polyLine.attr({
             fill: 'none',
-            stroke: 'green'
+            stroke: '#999',
+            strokeWidth: 4
         });
     }
 
