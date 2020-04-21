@@ -13,13 +13,12 @@ const DIAGONAL_WEIGHT = 1.5;
 export class BlockField {
     blockSize = BLOCK_SIZE;
     strokeWidth = STROKE_WIDTH;
-    allowDiagonals = false;
+    allowDiagonals = true;
     onBlockClick: (event: MouseEvent) => void;
     private paper: Snap.Paper;
     private height: number;
     private width: number;
     private blocks: Map<string, Snap.Element> = new Map<string, Snap.Element>();
-    private polyLine: Snap.Element;
 
     /**
      * Default constructor
@@ -33,9 +32,17 @@ export class BlockField {
         this.width = Number(this.svgElement.clientWidth);
     }
 
+    get maxWidth(): number {
+        return Math.floor(this.width / this.blockSize);
+    }
+
+    get maxHeight(): number {
+        return Math.floor(this.height / this.blockSize);
+    }
+
     grid(backgroundColor = 'white', borderColor = 'black') {
-        const maxWidth = Math.floor(this.width / this.blockSize);
-        const maxHeight = Math.floor(this.height / this.blockSize);
+        const maxWidth = this.maxWidth;
+        const maxHeight = this.maxHeight;
         for (let y = 0; y < maxHeight; y++) {
             for (let x = 0; x < maxWidth; x++) {
                 this.addBlock(x, y, backgroundColor, borderColor);
@@ -55,25 +62,6 @@ export class BlockField {
         });
         rect.click(this.blockClick.bind(this, key));
         this.blocks.set(key, rect);
-    }
-
-    showConnections(blocks: string[]) {
-        if (this.polyLine) {
-            this.polyLine.remove();
-        }
-        const points = [];
-        for (const blockKey of blocks) {
-            const block = this.blocks.get(blockKey);
-            const realX = Number(block.attr('x')) + this.blockSize / 2 ;
-            const realY = Number(block.attr('y')) + this.blockSize / 2 ;
-            points.push(realX, realY);
-        }
-        this.polyLine = this.paper.polyline(points);
-        this.polyLine.attr({
-            fill: 'none',
-            stroke: '#999',
-            strokeWidth: 2
-        });
     }
 
     /**
@@ -100,12 +88,12 @@ export class BlockField {
             if (x < maxWidth && y < maxHeight) {
                 const key = this.getKey(x + 1, y + 1);
                 this.graph.set(key, { x: x + 1, y: y + 1 });
-                this.graph.connect(parentKey, key, DIAGONAL_WEIGHT);
+                this.graph.connect(parentKey, key, DIAGONAL_WEIGHT, true);
             }
             if (x > 0 && y < maxHeight) {
                 const key = this.getKey(x - 1, y + 1);
                 this.graph.set(key, { x: x - 1, y: y + 1 });
-                this.graph.connect(parentKey, key, DIAGONAL_WEIGHT);
+                this.graph.connect(parentKey, key, DIAGONAL_WEIGHT, true);
             }
         }
     }
