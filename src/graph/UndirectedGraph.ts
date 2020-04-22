@@ -5,6 +5,8 @@ import { PriorityQueue } from "../queue/priorityQueue";
  * Undirected graph
  */
 export class UndirectedGraph<T> {
+    weight = 1;
+    diagonalWeight = 1.5;
     private edgeList = new Map<string, Edge<T>[]>();
     private vertices = new Map<string, Vertex<T>>(); 
 
@@ -94,12 +96,16 @@ export class UndirectedGraph<T> {
             shortestPath.set(edge.to.label, { previous: '', weight: Infinity });
         }
         const currentWeight = shortestPath.get(edge.to.label).weight;
-        const newWeight = shortestPath.get(edge.from.label).weight + edge.weight;
+        const newWeight = shortestPath.get(edge.from.label).weight + this.getWeight(edge);
         if (newWeight < currentWeight) {
             const info = shortestPath.get(edge.to.label);
             info.previous = edge.from.label;
             info.weight = newWeight;
         }
+    }
+
+    private getWeight(edge: Edge<T>): number {
+        return edge.isDiagonal ? this.diagonalWeight : this.weight;
     }
 }
 

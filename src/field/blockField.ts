@@ -30,6 +30,7 @@ export class BlockField {
         this.paper = Snap(svgElement);
         this.height = Number(this.svgElement.clientHeight);
         this.width = Number(this.svgElement.clientWidth);
+        this.svgElement.innerHTML = '';
     }
 
     get maxWidth(): number {
@@ -40,7 +41,7 @@ export class BlockField {
         return Math.floor(this.height / this.blockSize);
     }
 
-    grid(backgroundColor = 'white', borderColor = 'black') {
+    grid(backgroundColor = 'white', borderColor = 'black'): void {
         const maxWidth = this.maxWidth;
         const maxHeight = this.maxHeight;
         for (let y = 0; y < maxHeight; y++) {
@@ -48,6 +49,22 @@ export class BlockField {
                 this.addBlock(x, y, backgroundColor, borderColor);
                 this.connectBlock(x, y, maxWidth-1, maxHeight-1);
             }
+        }
+    }
+
+    setBackgroundColor(backgroundColor: string): void {
+        for (const block of this.blocks) {
+            block[1].attr({
+                fill: backgroundColor,
+            });
+        }
+    }
+
+    setBorderColor(borderColor: string): void {
+        for (const block of this.blocks) {
+            block[1].attr({
+                stroke: borderColor,
+            });
         }
     }
 

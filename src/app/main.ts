@@ -6,7 +6,7 @@ import { Menu } from "./menu";
 
 const BLOCK_SIZE = 40;
 const GRID_BACKGROUND_COLOR = '#f1f1f1';
-const GRID_STROKE_COLOR = '#ccc';
+const GRID_BORDER_COLOR = '#ccc';
 
 const START_NODE_BACKGROUND_COLOR = 'rgba(41, 128, 185, 0.5)';
 const START_NODE_STROKE_COLOR = 'black';
@@ -14,29 +14,47 @@ const END_NODE_BACKGROUND_COLOR = 'rgba(39, 174, 96, 0.5)';
 const END_NODE_STROKE_COLOR = 'black';
 export class Main {
     private menu: Menu;
+    private graph: UndirectedGraph<Block>;
+    private field: BlockField;
+    private visualConnection: VisualConnection;
 
     constructor() {
-        this.menu = new Menu();
+        this.setup(GRID_BACKGROUND_COLOR, GRID_BORDER_COLOR, BLOCK_SIZE);
     }
 
     main() {
-        const graph = new UndirectedGraph<Block>();
-        const field = new BlockField(<SVGElement>document.querySelector('#paper'), graph);
-        const visualConnection = new VisualConnection(<SVGElement>document.querySelector('#paper'), graph);
-        field.blockSize = visualConnection.blockSize = BLOCK_SIZE;
-        field.grid(GRID_BACKGROUND_COLOR, GRID_STROKE_COLOR);
-        visualConnection.setStartNode(this.random(1, field.maxWidth-1), this.random(1, field.maxHeight-1), START_NODE_BACKGROUND_COLOR, START_NODE_STROKE_COLOR, 1);
-        visualConnection.setEndNode(this.random(1, field.maxWidth-1), this.random(1, field.maxHeight-1), END_NODE_BACKGROUND_COLOR, END_NODE_STROKE_COLOR, 1);
+        const backgroundColor = <HTMLInputElement>document.getElementById('backgroundColor');
+        const borderColor = <HTMLInputElement>document.getElementById('borderColor');
+        const blockSize = <HTMLInputElement>document.getElementById('blockSize');
         
-        visualConnection.onDragFinished = () => this.runAlgorithm(visualConnection, graph);
-        
+        // Event listeners
         document.getElementById('bfs').addEventListener('click', () => {
             this.menu.hide();
-            this.runAlgorithm(visualConnection, graph);
+            this.runAlgorithm(this.visualConnection, this.graph);
         });
+
+        backgroundColor.addEventListener('change', () => this.field.setBackgroundColor(backgroundColor.value));
+        borderColor.addEventListener('change', () => this.field.setBorderColor(borderColor.value));
+        blockSize.addEventListener('change', () => this.setup(backgroundColor.value, borderColor.value, Number(blockSize.value)));
+    }
+
+    private setup(backgroundColor: string, borderColor: string, blockSize: number) {
+        this.menu = new Menu();
+        this.graph = new UndirectedGraph<Block>();
+        this.field = new BlockField(<SVGElement>document.querySelector('#paper'), this.graph);
+        this.visualConnection = new VisualConnection(<SVGElement>document.querySelector('#paper'), this.graph);
+        this.field.blockSize = this.visualConnection.blockSize = blockSize;
+        this.field.grid(backgroundColor, borderColor);
+        this.visualConnection.setStartNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1), START_NODE_BACKGROUND_COLOR, START_NODE_STROKE_COLOR, 1);
+        this.visualConnection.setEndNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1), END_NODE_BACKGROUND_COLOR, END_NODE_STROKE_COLOR, 1);
+        this.visualConnection.onDragFinished = () => this.runAlgorithm(this.visualConnection, this.graph);        
     }
 
     private runAlgorithm(connection: VisualConnection, graph: UndirectedGraph<Block>) {
+        const blockWeight = <HTMLInputElement>document.getElementById('blockWeight');
+        const diagonalWeight = <HTMLInputElement>document.getElementById('diagonalWeight');
+        graph.weight = Number(blockWeight.value);
+        graph.diagonalWeight = Number(diagonalWeight.value);
         const start = `${connection.startX}_${connection.startY}`;
         const end = `${connection.endX}_${connection.endY}`;
         const allowDiagonal = <HTMLInputElement>document.getElementById('allowDiagonal');
