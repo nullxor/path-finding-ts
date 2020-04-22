@@ -7,6 +7,7 @@ import { UndirectedGraph } from "../graph/undirectedGraph";
  */
 export class VisualConnection {
     blockSize = 30;
+    onDragFinished: () => void;
     private paper: Snap.Paper;
     private startNode: Snap.Element = null;
     private endNode: Snap.Element = null;
@@ -102,6 +103,7 @@ export class VisualConnection {
 
     private onDragEnd(element: Snap.Element, event: MouseEvent): void {
         element.attr({x: this.getPositionX(element) * this.blockSize, y: this.getPositionY(element) * this.blockSize});
+        this.onDragFinished();
     }
 
     // Mobile Support

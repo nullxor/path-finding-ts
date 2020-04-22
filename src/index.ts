@@ -4,3 +4,4 @@ window.addEventListener('load', () => {
     const main = new Main();
     main.main();
 });
+
