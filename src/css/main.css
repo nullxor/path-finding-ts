@@ -18,10 +18,12 @@ nav.main-menu {
     color: #eee;
     height: 100%;
     left: 0;
+    overflow: auto;
     position: absolute;
     padding: 10px;
     top: 0;
     width: 400px;
+    z-index: 100;
 }
 @media (min-width: 800px) {
     nav.main-menu {
