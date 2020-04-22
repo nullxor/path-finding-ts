@@ -43,22 +43,28 @@ export class VisualConnection {
         this.setNode(this.endNode, x * this.blockSize, y * this.blockSize, backgroundColor, borderColor, borderWidth);
     }
 
-    showConnections(blocks: string[]) {
+    showConnections(blocks: string[], totalWeight: number) {
         if (this.polyLine) {
             this.polyLine.remove();
         }
         const points = [];
         for (const blockKey of blocks) {
-            const coord = Block.toPixel(this.graph.get(blockKey), this.blockSize);
+            const vertex = this.graph.get(blockKey);
+            const coord = Block.toPixel(vertex, this.blockSize);
             const realX = coord.x + this.blockSize / 2 ;
             const realY = coord.y + this.blockSize / 2 ;
             points.push(realX, realY);
         }
+        const info = `Block(s): ${blocks.length - 1} - Weight: ${totalWeight}`;
+        const infoDiv = document.getElementById('information');
+        infoDiv.innerHTML = info;
+
         this.polyLine = this.paper.polyline(points);
         this.polyLine.attr({
             fill: 'none',
             stroke: '#333',
-            strokeWidth: 2
+            strokeWidth: 2,
+            'font-size': '10px'
         });
     }
 
@@ -97,8 +103,9 @@ export class VisualConnection {
     }
 
     private onDrag(element: Snap.Element, dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
-        if (x > 0 && y > 0 && x < (this.svgElement.clientWidth - this.blockSize) && y < (this.svgElement.clientHeight - this.blockSize))
-        element.attr({x, y});
+        if (x > 0 && y > 0 && x < (this.svgElement.clientWidth - this.blockSize) && y < (this.svgElement.clientHeight - this.blockSize)) {
+            element.attr({x, y});
+        }
     }
 
     private onDragEnd(element: Snap.Element, event: MouseEvent): void {

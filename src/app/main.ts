@@ -67,7 +67,7 @@ export class Main {
             current = shortestPath.get(currentKey);
             connections.push(currentKey);
         }
-        connection.showConnections(connections);
+        connection.showConnections(connections, shortestPath.get(end).weight);
     }
 
     private random(min, max): number {

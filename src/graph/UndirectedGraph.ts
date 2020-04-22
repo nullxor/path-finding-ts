@@ -72,39 +72,33 @@ export class UndirectedGraph<T> {
 
     dijkstra(start: string, end: string, allowDiagonal = false): Map<string, ShortestPath> {
         const queue = new PriorityQueue<Vertex<T>>();
-        const visited = new Map<string, boolean>();
         const shortestPath = new Map<string, ShortestPath>();
         let currentVertex: Vertex<T>;
         queue.enqueue(0, this.vertices.get(start));
         shortestPath.set(start, { previous: '', weight: 0 });
         while (queue.length > 0) {
             currentVertex = queue.dequeue();
-            if (!visited.has(currentVertex.label)) {
-                visited.set(currentVertex.label, true);
-                for (const edge of this.edgeList.get(currentVertex.label)) {
-                    if (edge.isDiagonal && !allowDiagonal) continue;
-                    this.relax(edge, shortestPath);
-                    queue.enqueue(shortestPath.get(edge.to.label).weight, edge.to);
-                }
+            for (const edge of this.edgeList.get(currentVertex.label)) {
+                this.relax(edge, shortestPath, queue);
             }
         }
         return shortestPath;
     }
 
-    private relax(edge: Edge<T>, shortestPath: Map<string, ShortestPath>) {
+    private relax(edge: Edge<T>, shortestPath: Map<string, ShortestPath>, queue: PriorityQueue<Vertex<T>>) {
         if (!shortestPath.has(edge.to.label)) {
-            shortestPath.set(edge.to.label, { previous: '', weight: Infinity });
+            shortestPath.set(edge.to.label, { previous: edge.from.label, weight: Infinity });
         }
-        const currentWeight = shortestPath.get(edge.to.label).weight;
+        const neighbour = shortestPath.get(edge.to.label);
         const newWeight = shortestPath.get(edge.from.label).weight + this.getWeight(edge);
-        if (newWeight < currentWeight) {
-            const info = shortestPath.get(edge.to.label);
-            info.previous = edge.from.label;
-            info.weight = newWeight;
+        if (newWeight < neighbour.weight) {
+            neighbour.previous = edge.from.label;
+            neighbour.weight = newWeight;
+            queue.enqueue(newWeight, edge.to);
         }
     }
 
-    private getWeight(edge: Edge<T>): number {
+     getWeight(edge: Edge<T>): number {
         return edge.isDiagonal ? this.diagonalWeight : this.weight;
     }
 }
