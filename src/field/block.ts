@@ -1,3 +1,5 @@
+import { Coord } from "./coord";
+
 export class Block {
     x: number;
     y: number;
@@ -13,5 +15,19 @@ export class Block {
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * Converts from "Block Unit" to pixel
+     */
+    static toPixel(block: Block, blockSize: number): Coord {
+        return { x: block.x * blockSize, y: block.y * blockSize };
+    }
+
+    /**
+     * Converts from pixel to "Block Unit"
+     */
+    static toBlock(block: Block, blockSize: number): Coord {
+        return { x: Math.floor(block.x / blockSize), y: Math.floor(block.y / blockSize) };
     }
 }
