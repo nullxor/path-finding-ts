@@ -4,13 +4,13 @@ Tiny project that I developed on spare time to learn TypeScript, SVG and as a Gr
 
 Inspired on [PathFinding.js](http://qiao.github.io/PathFinding.js/visual/).
 
-So this repo contains a visual representation of famous path algorithms and implementation of the following Data Structures / Algorithms in TypeScript:
+This repo contains the implementation of the following Data Structures / Algorithms in TypeScript:
 * A* and Dijkstra algorithm  
 * Heap based priority queue
 * Doubly linked list based queue
 * BFS and DFS algorithm (Not used ATM)
 
-You can:
+## Features
 * Drag start (blue) and destination (green) vertex around the screen and choose from 2 path finding algorithms (Dijkstra and A*).
 * Set the block and diagonal weight.
 * Add obstacles by start dragging on any empty grid block
@@ -24,7 +24,8 @@ Each block is a graph vertex and they're connected through a visual representati
 * [Font Awesome](https://fontawesome.com/)
 
 ## Build
-1- npm install && npm run build
+1. Clone this repo
+2. npm install && npm run build
 
 ## License
 MIT
