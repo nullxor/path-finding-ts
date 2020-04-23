@@ -4,8 +4,6 @@ import { Block } from "./field/block";
 import { VisualConnection } from "./field/visualConnection";
 import { Menu } from "./menu";
 
-const BLOCK_SIZE = 40;
-
 export class Main {
     private menu: Menu;
     private graph: UndirectedGraph<Block>;
@@ -13,7 +11,7 @@ export class Main {
     private visualConnection: VisualConnection;
 
     constructor() {
-        this.setup(BLOCK_SIZE);
+        this.setup();
     }
 
     main() {
@@ -26,11 +24,10 @@ export class Main {
         this.menu = new Menu();
     }
 
-    private setup(blockSize: number) {
+    private setup() {
         this.graph = new UndirectedGraph<Block>();
         this.field = new BlockField(<SVGElement>document.querySelector('#paper'), this.graph);
         this.visualConnection = new VisualConnection(<SVGElement>document.querySelector('#paper'), this.graph);
-        this.field.blockSize = this.visualConnection.blockSize = blockSize;
         this.field.grid();
         this.visualConnection.setStartNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1));
         this.visualConnection.setEndNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1));
@@ -43,8 +40,8 @@ export class Main {
         const diagonalWeight = <HTMLInputElement>document.getElementById('diagonalWeight');
         graph.weight = Number(blockWeight.value);
         graph.diagonalWeight = Number(diagonalWeight.value);
-        const start = `${connection.startX}_${connection.startY}`;
-        const end = `${connection.endX}_${connection.endY}`;
+        const start = Block.getKey(connection.startX, connection.startY);
+        const end = Block.getKey(connection.endX, connection.endY);
         const allowDiagonal = <HTMLInputElement>document.getElementById('allowDiagonal');
         const shortestPath = graph.dijkstra(start, end, allowDiagonal.checked);
         this.showConnections(shortestPath, end, start, connection);
