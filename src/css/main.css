@@ -93,11 +93,12 @@ input[type="checkbox"] {
     color: #eee;
 }
 .menu-button {
-    top: 1%;
     left: 1%;
+    top: 1%;
     position: absolute;
 }
 .menu-button button {
+    background: transparent;
     border: none;
     cursor: pointer;
 }

@@ -122,6 +122,7 @@ export class BlockField {
     }
 
     private blockClick(key: string, event: MouseEvent) {
+        return;
         const vertex = this.graph.getVertex(key);
         const block = this.blocks.get(key);
         vertex.isObstacle = !vertex.isObstacle;

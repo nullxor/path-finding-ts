@@ -12,7 +12,7 @@ export class UndirectedGraph<T> {
 
     set(label: string, value: T) {
         if (!this.vertices.has(label)) {
-            const vertex = <Vertex<T>> { label, value };
+            const vertex = <Vertex<T>> { label, value, isObstacle: false };
             this.vertices.set(label, vertex);
             this.edgeList.set(label, []);
         }
@@ -119,7 +119,7 @@ export interface ShortestPath {
 export interface Vertex<T> {
     label: string;
     value: T;
-    isObstacle?: boolean;
+    isObstacle: boolean;
 }
 
 export interface Edge<T> {

@@ -24,12 +24,10 @@ export class Main {
             this.menu.hide();
             this.runAlgorithm(this.visualConnection, this.graph);
         });
-
-        blockSize.addEventListener('change', () => this.setup(Number(blockSize.value)));
+        this.menu = new Menu();
     }
 
     private setup(blockSize: number) {
-        this.menu = new Menu();
         this.graph = new UndirectedGraph<Block>();
         this.field = new BlockField(<SVGElement>document.querySelector('#paper'), this.graph);
         this.visualConnection = new VisualConnection(<SVGElement>document.querySelector('#paper'), this.graph);
@@ -37,7 +35,7 @@ export class Main {
         this.field.grid();
         this.visualConnection.setStartNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1));
         this.visualConnection.setEndNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1));
-        this.visualConnection.onDragFinished = () => true;//this.runAlgorithm(this.visualConnection, this.graph);        
+        this.visualConnection.onDragFinished = () => this.runAlgorithm(this.visualConnection, this.graph);        
     }
 
     private runAlgorithm(connection: VisualConnection, graph: UndirectedGraph<Block>) {
@@ -55,13 +53,14 @@ export class Main {
     private showConnections(shortestPath: Map<string, ShortestPath>, end: string, start: string, connection: VisualConnection) {
         let current = shortestPath.get(end);
         let currentKey = end;
+        const weight = current && current.weight || -1;
         const connections = [currentKey];
-        while (currentKey !== start) {
+        while (current && currentKey !== start) {
             currentKey = current.previous;
             current = shortestPath.get(currentKey);
             connections.push(currentKey);
         }
-        connection.showConnections(connections, shortestPath.get(end).weight);
+        connection.showConnections(connections, weight);
     }
 
     private random(min, max): number {

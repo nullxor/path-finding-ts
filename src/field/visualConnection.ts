@@ -18,6 +18,7 @@ export class VisualConnection {
     private endNode: Snap.Element = null;
     private wire: Snap.Element = null;
     private polyLine: Snap.Element;
+    private isObstacleMode = false;
 
     /**
      * Default constructor
@@ -27,13 +28,15 @@ export class VisualConnection {
     constructor(private svgElement: SVGElement, private graph: UndirectedGraph<Block>) {
         this.svgElement = svgElement;
         this.paper = Snap(svgElement);
+        this.graph = graph;
+        this.paper.drag(this.onPaperDrag.bind(this), this.onPaperStartDrag.bind(this), null);
     }
     
     setStartNode(x: number, y: number) {
         if (!this.startNode) {
             this.startNode = this.paper.rect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
-            this.startNode.drag(this.onDrag.bind(this, this.wire), null, this.onDragEnd.bind(this, this.startNode));
-            this.startNode.touchmove(this.onTouchMove.bind(this, this.startNode));
+            this.startNode.drag(this.onDrag.bind(this), null, this.onDragEnd.bind(this, this.startNode));
+            this.startNode.touchmove(this.onTouchMove.bind(this));
             this.startNode.touchend(this.onDragEnd.bind(this, this.startNode));
         }
         this.setNode(this.startNode, x * this.blockSize, y * this.blockSize, START_BACKGROUND_COLOR, START_BORDER_COLOR, 1);
@@ -42,14 +45,20 @@ export class VisualConnection {
     setEndNode(x: number, y: number) {
         if (!this.endNode) {
             this.endNode = this.paper.rect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
-            this.endNode.drag(this.onDrag.bind(this, this.wire), null, this.onDragEnd.bind(this, this.endNode));
-            this.endNode.touchmove(this.onTouchMove.bind(this, this.endNode));
+            this.endNode.drag(this.onDrag.bind(this), null, this.onDragEnd.bind(this, this.endNode));
+            this.endNode.touchmove(this.onTouchMove.bind(this));
             this.endNode.touchend(this.onDragEnd.bind(this, this.endNode));
         }
         this.setNode(this.endNode, x * this.blockSize, y * this.blockSize, END_BACKGROUND_COLOR, END_BORDER_COLOR, 1);
     }
 
     showConnections(blocks: string[], totalWeight: number) {
+        const infoDiv = document.getElementById('information');
+        this.polyLine?.remove();
+        if(totalWeight === -1) {
+            infoDiv.innerHTML = "Can't reach the destination node :-S";
+            return;
+        }
         if (this.polyLine) {
             this.polyLine.remove();
         }
@@ -62,7 +71,6 @@ export class VisualConnection {
             points.push(realX, realY);
         }
         const info = `Block(s): ${blocks.length - 1} - Weight: ${totalWeight}`;
-        const infoDiv = document.getElementById('information');
         infoDiv.innerHTML = info;
 
         this.polyLine = this.paper.polyline(points);
@@ -116,7 +124,7 @@ export class VisualConnection {
         });
     }
 
-    private onDrag(element: Snap.Element, dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
+    private onDrag(dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
         if (!this.wire) {
             this.wire = this.paper.rect(0, 0, this.blockSize, this.blockSize);
             this.wire.attr({fill:'transparent', stroke:'black' });
@@ -127,20 +135,42 @@ export class VisualConnection {
     }
 
     private onDragEnd(element: Snap.Element, event: MouseEvent): void {
-        const pos = Block.toBlock({x: event.x, y: event.y}, this.blockSize);
-        const block = this.graph.getVertex(`${pos.x}_${pos.y}`);
-        if (!block.isObstacle) {
-            element.attr({x: pos.x * this.blockSize, y: pos.y * this.blockSize});
+        if (this.wire) {
+            const pos = Block.toBlock({x: Number(this.wire.attr('x')), y: Number(this.wire.attr('y'))}, this.blockSize);
+            const block = this.graph.getVertex(`${pos.x}_${pos.y}`);
+            if (!block.isObstacle) {
+                element.attr({x: pos.x * this.blockSize, y: pos.y * this.blockSize});
+            }
+            this.onDragFinished();
+            this.wire.remove();
+            this.wire = null;
         }
-        this.onDragFinished();
-        this.wire.remove();
-        this.wire = null;
+    }
+
+    private onPaperStartDrag(x: number, y: number, event: MouseEvent) {
+        if (this.wire) return;
+
+        const pos = Block.toBlock({x, y}, this.blockSize);
+        const vertex = this.graph.getVertex(`${pos.x}_${pos.y}`);
+        this.isObstacleMode = !vertex.isObstacle;
+    }
+
+    private onPaperDrag(dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
+        if (this.wire) return;
+        const pos = Block.toBlock({x, y}, this.blockSize);
+        const vertex = this.graph.getVertex(`${pos.x}_${pos.y}`);
+        const element = Snap.getElementByPoint(x, y);
+        if (!vertex || element === this.startNode || element === this.endNode || element === this.polyLine) return;
+        vertex.isObstacle = this.isObstacleMode;
+        element.attr({
+            fill: this.isObstacleMode ? 'gray' : '#f1f1f1'
+        });
     }
 
     // Mobile Support
-    private onTouchMove(element: Snap.Element, event: TouchEvent): void {
+    private onTouchMove(event: TouchEvent): void {
         const x = event.touches[0].clientX;
         const y = event.touches[0].clientY;
-        this.onDrag.call(this, element, x, y, x, y, event);
+        this.onDrag.call(this, x, y, x, y, event);
     }
 }
