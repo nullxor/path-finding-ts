@@ -1,5 +1,5 @@
 import { Queue } from "../queue/queue";
-import { PriorityQueue } from "../queue/priorityQueue";
+import { PriorityQueue } from "../queue/priorityqueue";
 
 /**
  * Undirected graph
@@ -37,7 +37,7 @@ export class UndirectedGraph<T> {
         edgesV2.push(edgeV2);
     }
 
-    async bfs(start: string, callback: (vertex: Vertex<T>) => Promise<boolean>, callbackFinished?: () => void) {
+    bfs(start: string, callback: (vertex: Vertex<T>) => boolean) {
         const queue = new Queue<Vertex<T>>();
         const visited = new Map<string, boolean>();
         let currentVertex: Vertex<T>;
@@ -47,16 +47,15 @@ export class UndirectedGraph<T> {
             currentVertex = queue.dequeue();
             if (!visited.has(currentVertex.label)) {
                 visited.set(currentVertex.label, true);
-                keepGoing = await callback(currentVertex);
+                keepGoing = callback(currentVertex);
             for (const edge of this.edgeList.get(currentVertex.label)) {
                     queue.enqueue(edge.to);
                 }
             }
         }
-        callbackFinished?.call(currentVertex);
     }
 
-    async dfs(start: string, callback: (vertex: Vertex<T>) => Promise<boolean>, callbackFinished?: () => void) {
+    dfs(start: string, callback: (vertex: Vertex<T>) => boolean) {
         const stack = [this.vertices.get(start)];
         const visited = new Map<string, boolean>();
         let currentVertex: Vertex<T>;
@@ -65,13 +64,12 @@ export class UndirectedGraph<T> {
             currentVertex = stack.pop();
             if (!visited.has(currentVertex.label)) {
                 visited.set(currentVertex.label, true);
-                keepGoing = await callback(currentVertex);
+                keepGoing = callback(currentVertex);
             for (const edge of this.edgeList.get(currentVertex.label)) {
                     stack.push(edge.to);
                 }
             }
         }
-        callbackFinished?.call(currentVertex);
     }
 
     dijkstra(start: string, end: string, allowDiagonal = false): Map<string, ShortestPath> {
