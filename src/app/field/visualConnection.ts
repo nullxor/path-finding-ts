@@ -8,12 +8,13 @@ const END_BACKGROUND_COLOR = 'rgba(39, 174, 96, 0.5)';
 const END_BORDER_COLOR = 'black';
 const OBSTACLE_BACKGROUND_COLOR = 'gray';
 const BACKGROUND_COLOR = '#f1f1f1';
+const BLOCK_SIZE = 30;
 
 /**
  * Visual representation of the 2 main nodes and the link between them
  */
 export class VisualConnection {
-    blockSize = 30;
+    blockSize = BLOCK_SIZE;
     onDragFinished: () => void;
     onObstacleFinished: () => void;
     private paper: Snap.Paper;
@@ -63,7 +64,7 @@ export class VisualConnection {
         const points = [];
         for (const blockKey of blocks) {
             const vertex = this.graph.get(blockKey);
-            const coord = Block.toPixel(vertex, this.blockSize);
+            const coord = Block.toPixel(vertex.x, vertex.y, this.blockSize);
             const realX = coord.x + this.blockSize / 2 ;
             const realY = coord.y + this.blockSize / 2 ;
             points.push(realX, realY);
@@ -152,8 +153,8 @@ export class VisualConnection {
     }
 
     private onNodeDragEnd(element: Snap.Element, event: MouseEvent) {
-        const pos = Block.toBlock({x: Number(this.wire.attr('x')), y: Number(this.wire.attr('y'))}, this.blockSize);
-        const block = this.graph.getVertex(`${pos.x}_${pos.y}`);
+        const pos = Block.toBlock(Number(this.wire.attr('x')), Number(this.wire.attr('y')), this.blockSize);
+        const block = this.graph.getVertex(Block.getKey(pos.x, pos.y));
         if (!block.isObstacle) {
             this.draggingNode.attr({x: pos.x * this.blockSize, y: pos.y * this.blockSize});
         }
@@ -164,14 +165,14 @@ export class VisualConnection {
     }
 
     private onPaperDragStart(element: Snap.Element, x: number, y: number, event: MouseEvent) {
-        const pos = Block.toBlock({x, y}, this.blockSize);
-        const vertex = this.graph.getVertex(`${pos.x}_${pos.y}`);
+        const pos = Block.toBlock(x, y, this.blockSize);
+        const vertex = this.graph.getVertex(Block.getKey(pos.x, pos.y));
         this.isObstacleMode = !vertex.isObstacle;
     }
 
     private onPaperDrag(element: Snap.Element, dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
-        const pos = Block.toBlock({x, y}, this.blockSize);
-        const vertex = this.graph.getVertex(`${pos.x}_${pos.y}`);
+        const pos = Block.toBlock(x, y, this.blockSize);
+        const vertex = this.graph.getVertex(Block.getKey(pos.x, pos.y));
         if (!vertex || element === this.startNode || element === this.endNode || element === this.polyLine) return;
         vertex.isObstacle = this.isObstacleMode;
         element.attr({fill: this.isObstacleMode ? OBSTACLE_BACKGROUND_COLOR : BACKGROUND_COLOR});

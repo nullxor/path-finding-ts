@@ -20,14 +20,18 @@ export class Block {
     /**
      * Converts from "Block Unit" to pixel
      */
-    static toPixel(block: Block, blockSize: number): Coord {
-        return { x: block.x * blockSize, y: block.y * blockSize };
+    static toPixel(x: number, y: number, blockSize: number): Coord {
+        return { x: x * blockSize, y: y * blockSize };
     }
 
     /**
      * Converts from pixel to "Block Unit"
      */
-    static toBlock(block: Block, blockSize: number): Coord {
-        return { x: Math.floor(block.x / blockSize), y: Math.floor(block.y / blockSize) };
+    static toBlock(x: number, y: number, blockSize: number): Coord {
+        return { x: Math.floor(x / blockSize), y: Math.floor(y / blockSize) };
+    }
+
+    static getKey(x: number, y: number): string {
+        return `${x}_${y}`;
     }
 }
