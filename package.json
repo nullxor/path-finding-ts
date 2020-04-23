@@ -1,0 +1,29 @@
+{
+  "name": "path-finding-astar",
+  "version": "1.0.0",
+  "description": "Implementation of shortest path finding algorithms",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "npx parcel src/index.html",
+    "build": "npx parcel build src/index.html",
+    "test": "npx jest"
+  },
+  "keywords": [
+    "Path-Finding",
+    "A*",
+    "Graphs"
+  ],
+  "author": "Olfran Jiménez",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^25.3.0",
+    "parcel-bundler": "^1.12.4",
+    "ts-jest": "^25.4.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@types/snapsvg": "^0.5.0",
+    "snapsvg": "^0.5.1"
+  }
+}

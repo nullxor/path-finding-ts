@@ -1,7 +1,129 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
 * {
     margin: 0;
     padding: 0;
 }
+html, body, main {
+    font-family: 'Lato';
+    height: 100%;
+    width: 100%;
+}
 body {
     background-color: #f3f3f3;
+}
+nav.main-menu {
+    background-color: rgba(0, 0, 0, .8);
+    box-shadow: 0px 0px 5px rgba(80, 80, 80, .8);
+    color: #eee;
+    height: 100%;
+    left: 0;
+    overflow: auto;
+    position: absolute;
+    padding: 10px;
+    top: 0;
+    width: 400px;
+    z-index: 100;
+}
+@media (min-width: 800px) {
+    nav.main-menu {
+        display: block;
+    }
+}
+@media (max-width: 800px) {
+    nav.main-menu {
+        left: 0;
+        width: 100%;
+    }
+}
+.diagonal-checkbox:hover, .diagonal-checkbox:active {
+    color: #eee;
+}
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    top: 3px;
+    position: relative;
+}
+.control-panel {
+    padding: 5px;
+}
+.main-menu span.close-button {
+    left: 90%;
+    position: absolute;
+    top: 0;
+}
+a.btn {
+    color: #34495e;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+.control-panel label, .diagonal-checkbox {
+    color: #eee;
+    font-size: .9em;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+.github {
+    text-align: center;
+}
+.github a, .github a:hover {
+    color: #fff;
+}
+.info {
+    font-size: .9em;
+    margin-top: 15px;
+    text-align: justify;
+}
+.info .about {
+    font-weight: bold;
+    font-size: 1.5em;
+    text-align: center;
+}
+.play-button, .play-button:active {
+    background-color: transparent;
+    color: #eee;
+    transition: all .2s ease-in;
+}
+.play-button:hover {
+    background-color: #555;
+    border-color: #eee;
+    color: #eee;
+}
+.menu-button {
+    left: 1%;
+    top: 1%;
+    position: absolute;
+}
+.menu-button button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+.hidden {
+    display: none !important;
+}
+.information {
+    background-color: rgba(0, 0, 0, .6);
+    left: calc(50% - 100px);
+    height: 30px;
+    position: absolute;
+    text-align: center;
+    top: calc(100% - 30px);
+    width: 200px;
+}
+.information p {
+    color: #eee;
+    font-size: .8em;
+}
+.obstacle {
+    background-color: gray;
+}
+.features {
+    padding: 10px;
+}
+.features li {
+    list-style-type: disc;
 }
