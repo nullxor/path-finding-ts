@@ -14,12 +14,16 @@ export class UndirectedGraph<T> {
         if (!this.vertices.has(label)) {
             const vertex = <Vertex<T>> { label, value };
             this.vertices.set(label, vertex);
-            this.edgeList.set(label, [] )
+            this.edgeList.set(label, []);
         }
     }
 
     get(label: string): T {
         return this.vertices.get(label).value;
+    }
+
+    getVertex(label: string): Vertex<T> {
+        return this.vertices.get(label);
     }
 
     connect(v1: string, v2: string, weight: number, isDiagonal = false) {
@@ -79,13 +83,17 @@ export class UndirectedGraph<T> {
         while (queue.length > 0) {
             currentVertex = queue.dequeue();
             for (const edge of this.edgeList.get(currentVertex.label)) {
+                if (edge.isDiagonal && !allowDiagonal) continue;
                 this.relax(edge, shortestPath, queue);
             }
         }
         return shortestPath;
     }
 
-    private relax(edge: Edge<T>, shortestPath: Map<string, ShortestPath>, queue: PriorityQueue<Vertex<T>>) {
+    private relax(edge: Edge<T>, shortestPath: Map<string, ShortestPath>, queue: PriorityQueue<Vertex<T>>): void {
+        if (edge.to.isObstacle) {
+            return;
+        }
         if (!shortestPath.has(edge.to.label)) {
             shortestPath.set(edge.to.label, { previous: edge.from.label, weight: Infinity });
         }
@@ -111,6 +119,7 @@ export interface ShortestPath {
 export interface Vertex<T> {
     label: string;
     value: T;
+    isObstacle?: boolean;
 }
 
 export interface Edge<T> {

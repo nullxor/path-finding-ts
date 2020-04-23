@@ -2,6 +2,11 @@ import Snap from "snapsvg";
 import { Block } from "./block";
 import { UndirectedGraph } from "../graph/undirectedGraph";
 
+const START_BACKGROUND_COLOR = 'rgba(41, 128, 185, 0.5)';
+const START_BORDER_COLOR = 'black';
+const END_BACKGROUND_COLOR = 'rgba(39, 174, 96, 0.5)';
+const END_BORDER_COLOR = 'black';
+
 /**
  * Visual representation of the 2 main nodes and the link between them
  */
@@ -11,6 +16,7 @@ export class VisualConnection {
     private paper: Snap.Paper;
     private startNode: Snap.Element = null;
     private endNode: Snap.Element = null;
+    private wire: Snap.Element = null;
     private polyLine: Snap.Element;
 
     /**
@@ -22,25 +28,25 @@ export class VisualConnection {
         this.svgElement = svgElement;
         this.paper = Snap(svgElement);
     }
-
-    setStartNode(x: number, y: number, backgroundColor: string, borderColor: string, borderWidth = 1) {
+    
+    setStartNode(x: number, y: number) {
         if (!this.startNode) {
             this.startNode = this.paper.rect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
-            this.startNode.drag(this.onDrag.bind(this, this.startNode), null, this.onDragEnd.bind(this, this.startNode));
+            this.startNode.drag(this.onDrag.bind(this, this.wire), null, this.onDragEnd.bind(this, this.startNode));
             this.startNode.touchmove(this.onTouchMove.bind(this, this.startNode));
             this.startNode.touchend(this.onDragEnd.bind(this, this.startNode));
         }
-        this.setNode(this.startNode, x * this.blockSize, y * this.blockSize, backgroundColor, borderColor, borderWidth);
+        this.setNode(this.startNode, x * this.blockSize, y * this.blockSize, START_BACKGROUND_COLOR, START_BORDER_COLOR, 1);
     }
 
-    setEndNode(x: number, y: number, backgroundColor: string, borderColor: string, borderWidth = 1) {
+    setEndNode(x: number, y: number) {
         if (!this.endNode) {
             this.endNode = this.paper.rect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
-            this.endNode.drag(this.onDrag.bind(this, this.endNode), null, this.onDragEnd.bind(this, this.endNode));
+            this.endNode.drag(this.onDrag.bind(this, this.wire), null, this.onDragEnd.bind(this, this.endNode));
             this.endNode.touchmove(this.onTouchMove.bind(this, this.endNode));
             this.endNode.touchend(this.onDragEnd.bind(this, this.endNode));
         }
-        this.setNode(this.endNode, x * this.blockSize, y * this.blockSize, backgroundColor, borderColor, borderWidth);
+        this.setNode(this.endNode, x * this.blockSize, y * this.blockSize, END_BACKGROUND_COLOR, END_BORDER_COLOR, 1);
     }
 
     showConnections(blocks: string[], totalWeight: number) {
@@ -84,11 +90,19 @@ export class VisualConnection {
         return this.getPositionY(this.endNode);
     }
 
-    getPositionX(element: Snap.Element): number {
+    /**
+     * X Position in "Block" unit
+     * @param element Snap Element
+     */
+    private getPositionX(element: Snap.Element): number {
         return Math.round(Number(element.attr('x')) / this.blockSize);
     }
 
-    getPositionY(element: Snap.Element): number {
+    /**
+     * Y Position in "Block" unit
+     * @param element Snap Element
+     */
+    private getPositionY(element: Snap.Element): number {
         return Math.round(Number(element.attr('y')) / this.blockSize);
     }
     
@@ -103,14 +117,24 @@ export class VisualConnection {
     }
 
     private onDrag(element: Snap.Element, dx: number, dy: number, x: number, y: number, event: MouseEvent): void {
+        if (!this.wire) {
+            this.wire = this.paper.rect(0, 0, this.blockSize, this.blockSize);
+            this.wire.attr({fill:'transparent', stroke:'black' });
+        }
         if (x > 0 && y > 0 && x < (this.svgElement.clientWidth - this.blockSize) && y < (this.svgElement.clientHeight - this.blockSize)) {
-            element.attr({x, y});
+            this.wire.attr({x, y});
         }
     }
 
     private onDragEnd(element: Snap.Element, event: MouseEvent): void {
-        element.attr({x: this.getPositionX(element) * this.blockSize, y: this.getPositionY(element) * this.blockSize});
+        const pos = Block.toBlock({x: event.x, y: event.y}, this.blockSize);
+        const block = this.graph.getVertex(`${pos.x}_${pos.y}`);
+        if (!block.isObstacle) {
+            element.attr({x: pos.x * this.blockSize, y: pos.y * this.blockSize});
+        }
         this.onDragFinished();
+        this.wire.remove();
+        this.wire = null;
     }
 
     // Mobile Support

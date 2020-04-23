@@ -117,3 +117,6 @@ input[type="checkbox"] {
     color: #eee;
     font-size: .8em;
 }
+.obstacle {
+    background-color: gray;
+}

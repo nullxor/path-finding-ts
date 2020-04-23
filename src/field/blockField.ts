@@ -2,10 +2,12 @@ import Snap from 'snapsvg';
 import { UndirectedGraph } from '../graph/undirectedGraph';
 import { Block } from './block';
 
-const STROKE_WIDTH = 1;
 const BLOCK_SIZE = 30;
 const WEIGHT = 1;
 const DIAGONAL_WEIGHT = 1.5;
+const BACKGROUND_COLOR = '#f1f1f1';
+const BORDER_COLOR = '#bbb';
+const STROKE_WIDTH = 1;
 
 /**
  * Display SVG blocks using snap
@@ -18,7 +20,7 @@ export class BlockField {
     private paper: Snap.Paper;
     private height: number;
     private width: number;
-    private blocks: Map<string, Snap.Element> = new Map<string, Snap.Element>();
+    private blocks = new Map<string, Snap.Element>();
 
     /**
      * Default constructor
@@ -41,7 +43,7 @@ export class BlockField {
         return Math.floor(this.height / this.blockSize);
     }
 
-    grid(backgroundColor = 'white', borderColor = 'black'): void {
+    grid(backgroundColor = BACKGROUND_COLOR, borderColor = BORDER_COLOR): void {
         const maxWidth = this.maxWidth;
         const maxHeight = this.maxHeight;
         for (let y = 0; y < maxHeight; y++) {
@@ -120,6 +122,13 @@ export class BlockField {
     }
 
     private blockClick(key: string, event: MouseEvent) {
+        const vertex = this.graph.getVertex(key);
+        const block = this.blocks.get(key);
+        vertex.isObstacle = !vertex.isObstacle;
+        block.attr({
+            fill: vertex.isObstacle ? BORDER_COLOR : BACKGROUND_COLOR,
+            'class':  vertex.isObstacle ? 'obstacle' : ''
+        });
         this.onBlockClick?.call(null, event);
     }
 }
