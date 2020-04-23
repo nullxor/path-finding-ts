@@ -12,8 +12,7 @@ export class UndirectedGraph<T> {
 
     set(label: string, value: T) {
         if (!this.vertices.has(label)) {
-            const vertex = <Vertex<T>> { label, value, isObstacle: false };
-            this.vertices.set(label, vertex);
+            this.vertices.set(label, { label, value, isObstacle: false });
             this.edgeList.set(label, []);
         }
     }
@@ -31,10 +30,8 @@ export class UndirectedGraph<T> {
         const vertex2 = this.vertices.get(v2); 
         const edgesV1 = this.edgeList.get(v1);
         const edgesV2 = this.edgeList.get(v2);
-        const edgeV1 = { from: vertex1, to: vertex2, weight, isDiagonal };
-        const edgeV2 = { from: vertex2, to: vertex1, weight, isDiagonal };
-        edgesV1.push(edgeV1);
-        edgesV2.push(edgeV2);
+        edgesV1.push({from: vertex1, to: vertex2, weight, isDiagonal});
+        edgesV2.push({from: vertex2, to: vertex1, weight, isDiagonal});
     }
 
     bfs(start: string, callback: (vertex: Vertex<T>) => boolean) {
@@ -104,7 +101,7 @@ export class UndirectedGraph<T> {
         }
     }
 
-     getWeight(edge: Edge<T>): number {
+    private getWeight(edge: Edge<T>): number {
         return edge.isDiagonal ? this.diagonalWeight : this.weight;
     }
 }
