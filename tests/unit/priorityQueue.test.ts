@@ -1,4 +1,4 @@
-import { PriorityQueue } from "../../src/queue/priorityQueue";
+import { PriorityQueue } from "../../src/app/queue/priorityQueue";
 
 let queue: PriorityQueue<number>;
 const testCase = [8, 3, 1, 4, 5, 2, 9, 7, 6];

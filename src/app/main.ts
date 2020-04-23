@@ -1,7 +1,7 @@
-import { UndirectedGraph, ShortestPath } from "../graph/undirectedGraph";
-import { BlockField } from "../field/blockField";
-import { Block } from "../field/block";
-import { VisualConnection } from "../field/visualConnection";
+import { UndirectedGraph, ShortestPath } from "./graph/undirectedGraph";
+import { BlockField } from "./field/blockField";
+import { Block } from "./field/block";
+import { VisualConnection } from "./field/visualConnection";
 import { Menu } from "./menu";
 
 const BLOCK_SIZE = 40;

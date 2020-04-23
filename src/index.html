@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+  <link rel="stylesheet" href="main.css">
+  <title>Path finding</title>
+</head>
+
+<body>
+  <main>
+    <span class="menu-button">
+      <a role="button" class="btn" id="showMenu" title="Show menu"><i class="fa fa-bars fa-2x"></i></a>
+    </span>
+    <svg width="100%" height="100%" id="paper"></svg>
+    <nav id="mainMenu" class="main-menu">
+      <span class="close-button">
+        <a role="button" id="hideMenu" class="btn" title="Close"><i class="fa fa-close fa-2x"></i></a>
+      </span>
+      <div class="control-panel">
+        <div class="field">
+          <label for="algorithm" class="label">Algorithm</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select id="algorithm">
+                <option>Dijkstra</option>
+              </select>
+            </div>
+            </div>
+         </div>
+         <div class="columns">
+           <div class="column is-6">
+            <div class="field">
+              <label class="label">Block Weight</label>
+              <div class="control">
+                <input type="number" min="1" id="blockWeight" class="input" type="text" placeholder="1" value="1">
+              </div>
+            </div>
+           </div>
+           <div class="column is-6">
+            <div class="field">
+              <label class="label">Diag Weight</label>
+              <div class="control">
+                <input type="number" min="1" id="diagonalWeight" class="input" type="text" placeholder="2" value="2">
+              </div>
+            </div>
+           </div>
+         </div>
+         <div class="columns">
+           <div class="column">
+            <div class="field">
+              <div class="control">
+                <label for="allowDiagonal" class="diagonal-checkbox">
+                  <input id="allowDiagonal" type="checkbox" checked>
+                  Allow diagonals
+                </label>
+              </div>
+            </div>
+           </div>
+         </div>
+        <a role="button" id="bfs" class="button play-button is-fullwidth" title="Start Shortest Path Finding">
+          <span class="icon">
+            <i class="fa fa-play"></i>
+          </span>
+          <span>Run Algorithm</span>
+        </a>
+        <div class="info">
+          <div class="about">About</div>
+          Tiny project that I developed on spare time to learn TypeScript, SVG and as a Graph algorithms refresher. You can:
+          <ul class="features">
+            <li>Drag start (blue) and destination (green) vertex around the screen and choose from 3 path finding algorithms</li>
+            <li>Set the block and diagonal weight</li>
+            <li>Add obstacles by start dragging on any empty grid block</li>
+            <li>Remove obstacles by start dragging on any obstacle</li>
+          </ul>
+          Every block is a graph vertex and they're connected through a visual representation.
+          It's mobile friendly so you should be able to touch and drag the nodes around the screen on mobile devices.
+        </div>
+      </div>
+      <div class="github">
+        <a href="https://github.com/nullxor/path-finding-ts" title="https://github.com/nullxor/path-finding-ts" target="_blank">
+          <i class="fa fa-github fa-3x"></i>
+        </a>
+      </div>
+    </nav>
+  </main>
+  <div class="information">
+    <p id="information">There will be info here</p>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>

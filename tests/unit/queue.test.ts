@@ -1,4 +1,4 @@
-import { Queue } from "../../src/queue/queue";
+import { Queue } from "../../src/app/queue/queue";
 
 let queue: Queue<number>;
 const testCase = [1, 2, 3, 4, 5, 6, 7, 8];
