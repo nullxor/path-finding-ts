@@ -13,6 +13,7 @@ const END_BORDER_COLOR = 'black';
 export class VisualConnection {
     blockSize = 30;
     onDragFinished: () => void;
+    onObstacleFinished: () => void;
     private paper: Snap.Paper;
     private startNode: Snap.Element = null;
     private endNode: Snap.Element = null;
@@ -29,7 +30,7 @@ export class VisualConnection {
         this.svgElement = svgElement;
         this.paper = Snap(svgElement);
         this.graph = graph;
-        this.paper.drag(this.onPaperDrag.bind(this), this.onPaperStartDrag.bind(this), null);
+        this.paper.drag(this.onPaperDrag.bind(this), this.onPaperDragStart.bind(this), this.onPaperDragEnd.bind(this));
     }
     
     setStartNode(x: number, y: number) {
@@ -147,12 +148,16 @@ export class VisualConnection {
         }
     }
 
-    private onPaperStartDrag(x: number, y: number, event: MouseEvent) {
+    private onPaperDragStart(x: number, y: number, event: MouseEvent) {
         if (this.wire) return;
-
         const pos = Block.toBlock({x, y}, this.blockSize);
         const vertex = this.graph.getVertex(`${pos.x}_${pos.y}`);
         this.isObstacleMode = !vertex.isObstacle;
+    }
+
+    private onPaperDragEnd(x: number, y: number, event: MouseEvent) {
+        if (this.wire) return;
+        this.onObstacleFinished?.call(null);
     }
 
     private onPaperDrag(dx: number, dy: number, x: number, y: number, event: MouseEvent): void {

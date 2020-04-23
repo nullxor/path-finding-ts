@@ -53,11 +53,11 @@ input[type="checkbox"] {
     position: absolute;
     top: 0;
 }
-.main-menu span.close-button button {
+a.btn {
+    color: #34495e;
     background-color: transparent;
     border: none;
     cursor: pointer;
-    color: #eee;
     padding: 5px;
 }
 .control-panel label, .diagonal-checkbox {
@@ -120,4 +120,10 @@ input[type="checkbox"] {
 }
 .obstacle {
     background-color: gray;
+}
+.features {
+    padding: 10px;
+}
+.features li {
+    list-style-type: disc;
 }

@@ -21,7 +21,6 @@ export class Main {
         
         // Event listeners
         document.getElementById('bfs').addEventListener('click', () => {
-            this.menu.hide();
             this.runAlgorithm(this.visualConnection, this.graph);
         });
         this.menu = new Menu();
@@ -36,6 +35,7 @@ export class Main {
         this.visualConnection.setStartNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1));
         this.visualConnection.setEndNode(this.random(1, this.field.maxWidth-1), this.random(1, this.field.maxHeight-1));
         this.visualConnection.onDragFinished = () => this.runAlgorithm(this.visualConnection, this.graph);        
+        this.visualConnection.onObstacleFinished = () => this.runAlgorithm(this.visualConnection, this.graph);        
     }
 
     private runAlgorithm(connection: VisualConnection, graph: UndirectedGraph<Block>) {
